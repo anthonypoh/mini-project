@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+  <title>Host Lobby</title>
+
+  <script th:inline="javascript">
+    var lobbyId = /*[[${lobbyId}]]*/ 'default-value';
+  </script>
+  <script src="/js/host-config.js"></script>
+
+</head>
+
+<body>
+  <noscript>
+    <h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
+      enabled. Please enable
+      Javascript and reload this page!</h2>
+  </noscript>
+
+  <div class="container p-lg-2">
+    <div class="row" id="init">
+      <div class="col-md-6">
+        <h1>lobby id: <span th:text="${lobbyId}"></span></h1>
+      </div>
+      <div class="col-md-6">
+        <h1>Game starts in: <span id="initTimer"></span></h1>
+      </div>
+      <div class="col-md-12">
+        <table id="greeting" class="table table-striped">
+          <thead>
+            <tr>
+              <th>Players</th>
+            </tr>
+          </thead>
+          <tbody id="players">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row gx-2 gy-2 mt-5" id="game" style="display:none">
+      <div class="col-md-3"><h1 id="questionTimer">timer here</h1></div>
+      <div class="col-md-9 mb-5"><h1 id="gameQuestion">question here</h1></div>
+      <div class="col-md-6 text-center d-grid"><button class="btn btn-primary" id="gameQuestion1">question 1</button>
+      </div>
+      <div class="col-md-6 text-center d-grid"><button class="btn btn-danger" id="gameQuestion2">question 2</button>
+      </div>
+      <div class="col-md-6 text-center d-grid"><button class="btn btn-success" id="gameQuestion3">question 3</button>
+      </div>
+      <div class="col-md-6 text-center d-grid"><button class="btn btn-warning" id="gameQuestion4">question 4</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
