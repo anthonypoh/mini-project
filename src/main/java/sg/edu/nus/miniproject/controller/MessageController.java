@@ -76,7 +76,7 @@ public class MessageController {
       question.combineAndShuffleAnswers();
       String questionString = objectMapper.writeValueAsString(question);
       broadcastQuestion(questionString, lobbyId);
-      for (int i = 10; i > 0; i--) {
+      for (int i = 100; i > 0; i--) {
         broadcastQuestionTime(i, lobbyId);
         Thread.sleep(100);
       }

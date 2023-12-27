@@ -1,5 +1,7 @@
 package sg.edu.nus.miniproject.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.HashSet;
@@ -31,8 +33,14 @@ public class LobbyController {
   public ModelAndView getLobby(
     @RequestParam("lobbyId") String lobbyId,
     @RequestParam("name") String name
-  ) {
+  ) throws JsonMappingException, JsonProcessingException {
     ModelAndView mav = new ModelAndView("lobby");
+    boolean added = lr.addPlayer(name, lobbyId);
+    if (added) {
+      mav.addObject("added", added);
+      mav.setViewName("index");
+      return mav;
+    }
     mav.addObject("name", name);
     mav.addObject("lobbyId", lobbyId);
     return mav;

@@ -82,7 +82,7 @@ function showTimer(message) {
 }
 
 function questionTimer(message) {
-  $("#questionTimer").html(message);
+  $("#questionTimer").html("Points: " + message);
 }
 
 function showQuestion(question) {

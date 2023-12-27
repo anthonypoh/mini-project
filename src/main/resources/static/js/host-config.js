@@ -3,6 +3,7 @@ const stompClient = new StompJs.Client({
 });
 
 console.log("Lobby ID: " + lobbyId);
+var questionTime = 0;
 
 stompClient.onConnect = (frame) => {
   // setConnected(true);
@@ -40,7 +41,8 @@ stompClient.onConnect = (frame) => {
   stompClient.subscribe('/topic/game/' + lobbyId, (json) => {
     switch (JSON.parse(json.body).cmd) {
       case "questionTime":
-        questionTimer(JSON.parse(json.body).content);
+        questionTime = JSON.parse(json.body).content
+        questionTimer(questionTime);
         break;
       case "start":
         $("#game").show();
@@ -103,7 +105,7 @@ function showTimer(message) {
 }
 
 function questionTimer(message) {
-  $("#questionTimer").html(message);
+  $("#questionTimer").html("Points: " + message);
 }
 
 function showQuestion(question) {

@@ -37,6 +37,7 @@
             <button id="create" class="btn btn-primary" type="submit" formaction="/lobby">Join</button>
           </div>
         </form>
+        <div class="alert alert-danger" th:if="${added}">Somebody already took this name.</div>
       </div>
     </div>
   </div>
