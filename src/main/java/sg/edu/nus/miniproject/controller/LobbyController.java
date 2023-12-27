@@ -3,37 +3,23 @@ package sg.edu.nus.miniproject.controller;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
 import sg.edu.nus.miniproject.model.Lobby;
-import sg.edu.nus.miniproject.service.ApiCallService;
-import sg.edu.nus.miniproject.service.LobbyService;
-import sg.edu.nus.miniproject.websocket.WebSocketConfig;
+import sg.edu.nus.miniproject.repo.LobbyRepo;
 
 @Controller
 @RequestMapping(path = "/lobby")
 public class LobbyController {
 
   @Autowired
-  private ApiCallService apiCallService;
-
-  @Autowired
-  private LobbyService lobbyService;
-
-  // @Autowired
-  // private MessageService messageService;
-  @Autowired
-  private SimpMessagingTemplate messagingTemplate;
+  private LobbyRepo lr;
 
   private Set<Lobby> lobbies = new HashSet<>();
 
@@ -71,6 +57,7 @@ public class LobbyController {
       lobby.setLobbyId(generateUniqueId());
     }
     String lobbyId = lobby.getLobbyId();
+    lr.createLobby(lobbyId);
     mav.addObject("lobbyId", lobbyId);
     // lobby = new Lobby();
     // mav.addObject("lobbies", lobbies);

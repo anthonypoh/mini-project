@@ -88,9 +88,9 @@ function questionTimer(message) {
 function showQuestion(question) {
   $("#gameQuestion").html(question.question);
   if (question.type == "multiple") {
-    var questions = question.incorrect_answers;
-    questions.push(question.correct_answer);
-    shuffleQuestions(questions);
+    var questions = question.answers;
+    // questions.push(question.correct_answer);
+    // shuffleQuestions(questions);
 
     for (let i = 0; i < questions.length; i++) {
       $("#gameQuestion" + (i + 1)).html(questions[i]);
@@ -111,6 +111,15 @@ function shuffleQuestions(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+}
+
+function handleAnswer(message) {
+  var answer = $('#gameQuestion' + message).text();
+  var question = $('#gameQuestion').text();
+  stompClient.publish({
+    destination: "/app/checkAnswer/" + lobbyId,
+    body: JSON.stringify({ 'playerName': playerName, 'question': question, 'answer': answer })
+  });
 }
 
 // $(function () {

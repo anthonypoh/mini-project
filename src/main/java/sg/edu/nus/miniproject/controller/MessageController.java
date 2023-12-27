@@ -33,6 +33,8 @@ public class MessageController {
   @Autowired
   private MessageService messageService;
 
+  ObjectMapper objectMapper = new ObjectMapper();
+
   @MessageMapping("/hello/{lobbyId}")
   @SendTo("/topic/{lobbyId}")
   public Message greeting(Player message) throws Exception {
@@ -47,7 +49,6 @@ public class MessageController {
   @SendTo("/topic/host/{lobbyId}")
   public Message initGame(@DestinationVariable String lobbyId, String json)
     throws InterruptedException, IOException {
-    ObjectMapper objectMapper = new ObjectMapper();
     // ObjectMapper objectMapper = new ObjectMapper();
     // JsonNode jsonNode = objectMapper.readTree(json);
     // String lobbyId = jsonNode.get("lobbyId").asText();
@@ -72,6 +73,7 @@ public class MessageController {
 
     for (Question question : questions) {
       question.setCmd("question");
+      question.combineAndShuffleAnswers();
       String questionString = objectMapper.writeValueAsString(question);
       broadcastQuestion(questionString, lobbyId);
       for (int i = 10; i > 0; i--) {
@@ -81,6 +83,21 @@ public class MessageController {
     }
 
     return new Message("gameEnd", "1");
+  }
+
+  @MessageMapping("/checkAnswer/{lobbyId}")
+  @SendTo("/topic/game/{lobbyId}")
+  public Message checkAnswer(@DestinationVariable String lobbyId, String json)
+    throws JsonMappingException, JsonProcessingException {
+    JsonNode jsonNode = objectMapper.readTree(json);
+    String playerName = jsonNode.get("playerName").asText();
+    String question = jsonNode.get("question").asText();
+    String answer = jsonNode.get("answer").asText();
+
+    // System.out.println(playerName);
+    // System.out.println(question);
+    // System.out.println(answer);
+    return new Message("answer", "{\"playerName\": \"abc\"}");
   }
 
   private void broadcastInitTime(int i, String lobbyId) {

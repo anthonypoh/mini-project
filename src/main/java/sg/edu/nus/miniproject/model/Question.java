@@ -1,6 +1,8 @@
 package sg.edu.nus.miniproject.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Question {
@@ -16,6 +18,8 @@ public class Question {
 
   @JsonProperty("incorrect_answers")
   private List<String> incorrectAnswers;
+
+  private List<String> answers = new ArrayList<>();
 
   public Question() {}
 
@@ -89,5 +93,19 @@ public class Question {
 
   public void setIncorrectAnswers(List<String> incorrectAnswers) {
     this.incorrectAnswers = incorrectAnswers;
+  }
+
+  public List<String> getAnswers() {
+    return this.answers;
+  }
+
+  public void setAnswers(List<String> answers) {
+    this.answers = answers;
+  }
+
+  public void combineAndShuffleAnswers() {
+    this.answers.add(correctAnswer);
+    this.answers.addAll(incorrectAnswers);
+    Collections.shuffle(this.answers);
   }
 }

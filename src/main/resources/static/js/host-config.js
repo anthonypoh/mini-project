@@ -109,9 +109,9 @@ function questionTimer(message) {
 function showQuestion(question) {
   $("#gameQuestion").html(question.question);
   if (question.type == "multiple") {
-    var questions = question.incorrect_answers;
-    questions.push(question.correct_answer);
-    shuffleQuestions(questions);
+    var questions = question.answers;
+    // questions.push(question.correct_answer);
+    // shuffleQuestions(questions);
 
     for (let i = 0; i < questions.length; i++) {
       $("#gameQuestion" + (i + 1)).html(questions[i]);
