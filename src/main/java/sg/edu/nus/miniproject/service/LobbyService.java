@@ -8,17 +8,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 import sg.edu.nus.miniproject.model.Question;
 import sg.edu.nus.miniproject.model.QuestionResponse;
+import sg.edu.nus.miniproject.repo.LobbyRepo;
 
 @Service
 public class LobbyService {
 
   @Autowired
   private ApiCallService apiCallService;
-
-  @Autowired
-  private MessageService messageService;
 
   ObjectMapper objectMapper = new ObjectMapper();
 
@@ -55,7 +54,7 @@ public class LobbyService {
   public List<Question> getQuestions()
     throws JsonMappingException, JsonProcessingException {
     String jsonRequest = apiCallService.fetchDataFromApi(
-      "https://opentdb.com/api.php?amount=10&category=18&difficulty=medium"
+      "https://opentdb.com/api.php?amount=5&category=18&difficulty=medium"
     );
     QuestionResponse qr = objectMapper.readValue(
       jsonRequest,
@@ -63,5 +62,26 @@ public class LobbyService {
     );
     List<Question> questions = qr.getResults();
     return questions;
+  }
+
+  public boolean checkAnswer(
+    List<Question> questions,
+    String lobbyId,
+    String question,
+    String answer
+  ) throws JsonMappingException, JsonProcessingException {
+    boolean correct = false;
+    // System.out.printf("the answer from js: %s\n", answer);
+
+    for (Question q : questions) {
+      if (HtmlUtils.htmlUnescape(q.getQuestion()).equals(question)) {
+        if (HtmlUtils.htmlUnescape(q.getCorrectAnswer()).equals(answer)) {
+          correct = true;
+        }
+        break;
+      }
+    }
+
+    return correct;
   }
 }

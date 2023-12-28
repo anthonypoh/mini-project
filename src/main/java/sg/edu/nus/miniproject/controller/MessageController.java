@@ -16,6 +16,7 @@ import sg.edu.nus.miniproject.model.Message;
 import sg.edu.nus.miniproject.model.Player;
 import sg.edu.nus.miniproject.model.Question;
 import sg.edu.nus.miniproject.model.QuestionResponse;
+import sg.edu.nus.miniproject.repo.LobbyRepo;
 import sg.edu.nus.miniproject.service.ApiCallService;
 import sg.edu.nus.miniproject.service.LobbyService;
 import sg.edu.nus.miniproject.service.MessageService;
@@ -25,13 +26,10 @@ import sg.edu.nus.miniproject.websocket.WebSocketConfig;
 public class MessageController {
 
   @Autowired
-  private ApiCallService apiCallService;
-
-  @Autowired
-  private LobbyService lobbyService;
-
-  @Autowired
   private MessageService messageService;
+
+  @Autowired
+  private LobbyRepo lr;
 
   ObjectMapper objectMapper = new ObjectMapper();
 
@@ -57,14 +55,7 @@ public class MessageController {
       Thread.sleep(1000);
     }
 
-    String jsonRequest = apiCallService.fetchDataFromApi(
-      "https://opentdb.com/api.php?amount=10&category=18&difficulty=medium"
-    );
-    QuestionResponse qr = objectMapper.readValue(
-      jsonRequest,
-      QuestionResponse.class
-    );
-    List<Question> questions = qr.getResults();
+    List<Question> questions = lr.getQuestions(lobbyId);
 
     messageService.sendMessageToClient(
       "/topic/game/" + lobbyId,
@@ -93,7 +84,6 @@ public class MessageController {
     String playerName = jsonNode.get("playerName").asText();
     String question = jsonNode.get("question").asText();
     String answer = jsonNode.get("answer").asText();
-
     // System.out.println(playerName);
     // System.out.println(question);
     // System.out.println(answer);

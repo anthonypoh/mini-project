@@ -44,6 +44,17 @@ public class LobbyRepo {
     return players;
   }
 
+  public List<Question> getQuestions(String lobbyId)
+    throws JsonMappingException, JsonProcessingException {
+    HashOperations<String, String, String> hashValue = template.opsForHash();
+    String jsonQuestions = hashValue.get(lobbyId, "questions");
+    List<Question> questions = objectMapper.readValue(
+      jsonQuestions,
+      new TypeReference<List<Question>>() {}
+    );
+    return questions;
+  }
+
   public void createLobby(String lobbyId)
     throws JsonMappingException, JsonProcessingException {
     HashOperations<String, String, String> hashValue = template.opsForHash();
@@ -73,5 +84,19 @@ public class LobbyRepo {
       hashValue.put(lobbyId, "players", jsonPlayers);
     }
     return added;
+  }
+
+  public void updatePoints(String playerName, String lobbyId, int points)
+    throws JsonMappingException, JsonProcessingException {
+    List<Player> players = getPlayers(lobbyId);
+    for (Player player : players) {
+      if (player.getName().equals(playerName)) {
+        player.setScore(player.getScore() + points);
+        break;
+      }
+    }
+    HashOperations<String, String, String> hashValue = template.opsForHash();
+    String jsonPlayers = objectMapper.writeValueAsString(players);
+    hashValue.put(lobbyId, "players", jsonPlayers);
   }
 }

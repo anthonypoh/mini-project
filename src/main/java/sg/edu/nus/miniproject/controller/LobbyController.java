@@ -59,7 +59,10 @@ public class LobbyController {
     // for (String question : questions) {
     //   System.out.println(question);
     // }
+
     ModelAndView mav = new ModelAndView("host-lobby");
+
+    // if have time, do it with redis, get keys -> loop -> verifiy -> add keys
     lobby.setLobbyId(generateUniqueId());
     while (!lobbies.add(lobby)) {
       lobby.setLobbyId(generateUniqueId());

@@ -4,6 +4,7 @@ const stompClient = new StompJs.Client({
 
 console.log("Lobby ID: " + lobbyId);
 console.log("Name: " + playerName);
+let questionTime = 0;
 
 stompClient.onConnect = (frame) => {
   setConnected(true);
@@ -14,7 +15,8 @@ stompClient.onConnect = (frame) => {
   stompClient.subscribe('/topic/game/' + lobbyId, (json) => {
     switch (JSON.parse(json.body).cmd) {
       case "questionTime":
-        questionTimer(JSON.parse(json.body).content);
+        questionTime = JSON.parse(json.body).content;
+        questionTimer(questionTime);
         break;
       case "start":
         $("#wait").hide();
@@ -116,9 +118,27 @@ function shuffleQuestions(array) {
 function handleAnswer(message) {
   var answer = $('#gameQuestion' + message).text();
   var question = $('#gameQuestion').text();
-  stompClient.publish({
-    destination: "/app/checkAnswer/" + lobbyId,
-    body: JSON.stringify({ 'playerName': playerName, 'question': question, 'answer': answer })
+  var jsonRequest = JSON.stringify({ 'playerName': playerName, 'question': question, 'answer': answer, 'points': questionTime });
+  sendDataToSpring(jsonRequest);
+  // stompClient.publish({
+  //   destination: "/app/checkAnswer/" + lobbyId,
+  //   body: JSON.stringify({ 'playerName': playerName, 'question': question, 'answer': answer })
+  // });
+}
+
+function sendDataToSpring(jsonRequest) {
+  $.ajax({
+    type: "POST",
+    url: "/api/check/" + lobbyId,
+    contentType: "application/json",
+    data: jsonRequest,
+    success: function (response) {
+      console.log("Data sent successfully!");
+      console.log(response);
+    },
+    error: function (error) {
+      console.error("Error sending data:", error);
+    }
   });
 }
 
