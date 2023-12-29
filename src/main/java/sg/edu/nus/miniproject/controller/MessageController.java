@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -50,7 +52,7 @@ public class MessageController {
     // ObjectMapper objectMapper = new ObjectMapper();
     // JsonNode jsonNode = objectMapper.readTree(json);
     // String lobbyId = jsonNode.get("lobbyId").asText();
-    for (int i = 10; i > 0; i--) {
+    for (int i = 10; i >= 0; i--) {
       broadcastInitTime(i, lobbyId);
       Thread.sleep(1000);
     }
@@ -67,28 +69,40 @@ public class MessageController {
       question.combineAndShuffleAnswers();
       String questionString = objectMapper.writeValueAsString(question);
       broadcastQuestion(questionString, lobbyId);
-      for (int i = 100; i > 0; i--) {
+      for (int i = 30; i >= 0; i--) {
         broadcastQuestionTime(i, lobbyId);
         Thread.sleep(100);
+      }
+
+      List<Player> players = lr.getPlayers(lobbyId);
+      Collections.sort(
+        players,
+        Comparator.comparing(Player::getScore).reversed()
+      );
+
+      String jsonPlayers = objectMapper.writeValueAsString(players);
+      broadcastLeaderboard(lobbyId, jsonPlayers);
+
+      for (int i = 3; i > 0; i--) {
+        broadcastLeaderboardTime(i, lobbyId);
+        Thread.sleep(1000);
       }
     }
 
     return new Message("gameEnd", "1");
   }
 
-  @MessageMapping("/checkAnswer/{lobbyId}")
-  @SendTo("/topic/game/{lobbyId}")
-  public Message checkAnswer(@DestinationVariable String lobbyId, String json)
-    throws JsonMappingException, JsonProcessingException {
-    JsonNode jsonNode = objectMapper.readTree(json);
-    String playerName = jsonNode.get("playerName").asText();
-    String question = jsonNode.get("question").asText();
-    String answer = jsonNode.get("answer").asText();
-    // System.out.println(playerName);
-    // System.out.println(question);
-    // System.out.println(answer);
-    return new Message("answer", "{\"playerName\": \"abc\"}");
-  }
+  // @MessageMapping("/checkAnswer/{lobbyId}")
+  // @SendTo("/topic/game/{lobbyId}")
+  // public Message checkAnswer(@DestinationVariable String lobbyId, String json)
+  //   throws JsonMappingException, JsonProcessingException {
+  //   JsonNode jsonNode = objectMapper.readTree(json);
+  //   String playerName = jsonNode.get("playerName").asText();
+  //   String question = jsonNode.get("question").asText();
+  //   String answer = jsonNode.get("answer").asText();
+
+  //   return new Message("answer", "{\"playerName\": \"abc\"}");
+  // }
 
   private void broadcastInitTime(int i, String lobbyId) {
     messageService.sendMessageToClient(
@@ -97,10 +111,24 @@ public class MessageController {
     );
   }
 
+  private void broadcastLeaderboard(String lobbyId, String jsonPlayers) {
+    messageService.sendMessageToClient(
+      "/topic/game/" + lobbyId,
+      String.format("{\"cmd\":\"leaderboard\",\"content\":%s}", jsonPlayers)
+    );
+  }
+
   private void broadcastQuestionTime(int i, String lobbyId) {
     messageService.sendMessageToClient(
       "/topic/game/" + lobbyId,
       String.format("{\"cmd\":\"questionTime\",\"content\":\"%d\"}", i)
+    );
+  }
+
+  private void broadcastLeaderboardTime(int i, String lobbyId) {
+    messageService.sendMessageToClient(
+      "/topic/game/" + lobbyId,
+      String.format("{\"cmd\":\"leaderboardTime\",\"content\":\"%d\"}", i)
     );
   }
 

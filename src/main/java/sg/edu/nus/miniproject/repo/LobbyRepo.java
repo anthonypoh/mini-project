@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
+import sg.edu.nus.miniproject.model.Lobby;
 import sg.edu.nus.miniproject.model.Player;
 import sg.edu.nus.miniproject.model.Question;
 import sg.edu.nus.miniproject.service.LobbyService;
@@ -55,16 +57,26 @@ public class LobbyRepo {
     return questions;
   }
 
-  public void createLobby(String lobbyId)
+  public void createLobby(Lobby lobby)
     throws JsonMappingException, JsonProcessingException {
     HashOperations<String, String, String> hashValue = template.opsForHash();
 
-    List<Question> questions = lobbyService.getQuestions();
+    List<Question> questions = lobbyService.getQuestions(
+      lobby.getNumOfQuestions(),
+      lobby.getCategory(),
+      lobby.getDifficulty()
+    );
     String jsonQuestions = objectMapper.writeValueAsString(questions);
 
-    hashValue.put(lobbyId, "players", "newGame");
-    hashValue.put(lobbyId, "questions", jsonQuestions);
-    template.expire(lobbyId, 10, TimeUnit.MINUTES);
+    hashValue.put(lobby.getLobbyId(), "players", "newGame");
+    hashValue.put(lobby.getLobbyId(), "questions", jsonQuestions);
+    template.expire(lobby.getLobbyId(), 10, TimeUnit.MINUTES);
+  }
+
+  public boolean lobbyExists(String lobbyId) {
+    ValueOperations<String, String> opsForValue = template.opsForValue();
+    boolean exists = opsForValue.getOperations().hasKey(lobbyId);
+    return exists;
   }
 
   public boolean addPlayer(String name, String lobbyId)

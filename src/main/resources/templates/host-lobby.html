@@ -46,15 +46,29 @@
     </div>
 
     <div class="row gx-2 gy-2 mt-5" id="game" style="display:none">
-      <div class="col-md-3"><h1 id="questionTimer">timer here</h1></div>
-      <div class="col-md-9 mb-5"><h1 id="gameQuestion">question here</h1></div>
-      <div class="col-md-6 text-center d-grid"><button class="btn btn-primary" id="gameQuestion1">question 1</button>
+      <div class="col-md-3">
+        <h1 id="questionTimer">timer here</h1>
       </div>
-      <div class="col-md-6 text-center d-grid"><button class="btn btn-danger" id="gameQuestion2">question 2</button>
+      <div class="col-md-9 mb-5">
+        <h1 id="gameQuestion">question here</h1>
       </div>
-      <div class="col-md-6 text-center d-grid"><button class="btn btn-success" id="gameQuestion3">question 3</button>
+      <div class="col-md-3"></div>
+      <div id="leaderboard" class="col" style="display:none;">
+        <ul id="players-list"></ul>
       </div>
-      <div class="col-md-6 text-center d-grid"><button class="btn btn-warning" id="gameQuestion4">question 4</button>
+      <div class="row" id="questionsDiv">
+        <div class="col-md-6 mb-3 text-center d-grid"><button class="btn btn-primary" id="gameQuestion1">question
+            1</button>
+        </div>
+        <div class="col-md-6 mb-3 text-center d-grid"><button class="btn btn-danger" id="gameQuestion2">question
+            2</button>
+        </div>
+        <div class="col-md-6 mb-3 text-center d-grid"><button class="btn btn-success" id="gameQuestion3">question
+            3</button>
+        </div>
+        <div class="col-md-6 mb-3 text-center d-grid"><button class="btn btn-warning" id="gameQuestion4">question
+            4</button>
+        </div>
       </div>
     </div>
   </div>

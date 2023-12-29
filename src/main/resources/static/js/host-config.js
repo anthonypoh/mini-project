@@ -16,15 +16,6 @@ stompClient.onConnect = (frame) => {
       case "time":
         showTimer(JSON.parse(json.body).content);
         break;
-      // case "questionTime":
-      //   questionTimer(JSON.parse(json.body).content);
-      //   break;
-      // case "start":
-      //   $("#game").show();
-      //   break;
-      // case "question":
-      //   showQuestion(JSON.parse(json.body));
-      //   break;
       case "gameEnd":
         if (JSON.parse(json.body).content == 1) {
           console.log("Game ended!")
@@ -41,6 +32,13 @@ stompClient.onConnect = (frame) => {
     switch (JSON.parse(json.body).cmd) {
       case "questionTime":
         questionTimer(JSON.parse(json.body).content);
+        break;
+      case "leaderboard":
+        var players = JSON.parse(json.body).content;
+        leaderboard(players);
+        break;
+      case "leaderboardTime":
+        leaderboardTimer(JSON.parse(json.body).content);
         break;
       case "start":
         $("#game").show();
@@ -68,11 +66,6 @@ stompClient.onStompError = (frame) => {
   console.error('Additional details: ' + frame.body);
 };
 
-// function setConnected(connected) {
-//   if (connected) {
-//     $("#game").hide();
-//   }
-// }
 
 function connect() {
   stompClient.activate();
@@ -96,22 +89,40 @@ function showMessage(message) {
 }
 
 function showTimer(message) {
-  if (message == 1) {
+  $("#initTimer").html(message);
+  if (message == 0) {
     $("#init").hide();
   }
-  $("#initTimer").html(message);
 }
 
 function questionTimer(message) {
   $("#questionTimer").html("Points: " + message);
 }
 
+function leaderboard(message) {
+  $("#leaderboard").show();
+  var playersListElement = document.getElementById('players-list');
+
+  message.forEach(function(player) {
+      var listItem = document.createElement('li');
+      listItem.textContent = player.name + ': ' + player.score;
+      playersListElement.appendChild(listItem);
+  })
+}
+
+function leaderboardTimer(message) {
+  $("#questionTimer").html(message);
+  $("#gameQuestion").html("Leaderboard");
+  $("#questionsDiv").hide();
+}
+
 function showQuestion(question) {
+  $("#players-list").empty();
+  $("#leaderboard").hide();
+  $("#questionsDiv").show();
   $("#gameQuestion").html(question.question);
   if (question.type == "multiple") {
     var questions = question.answers;
-    // questions.push(question.correct_answer);
-    // shuffleQuestions(questions);
 
     for (let i = 0; i < questions.length; i++) {
       $("#gameQuestion" + (i + 1)).html(questions[i]);
@@ -124,13 +135,6 @@ function showQuestion(question) {
     $("#gameQuestion2").html("False");
     $("#gameQuestion3").hide();
     $("#gameQuestion4").hide();
-  }
-
-  function shuffleQuestions(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
   }
 }
 

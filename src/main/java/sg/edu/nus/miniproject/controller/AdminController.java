@@ -14,7 +14,7 @@ public class AdminController {
   public String adminPage(Model m) {
     Lobby lobby = new Lobby();
     lobby.setNumOfQuestions(10);
-    lobby.setDifficulty("Easy");
+    lobby.setDifficulty("easy");
     m.addAttribute("lobby", lobby);
     return "admin";
   }

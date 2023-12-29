@@ -23,8 +23,6 @@ public class LobbyController {
   @Autowired
   private LobbyRepo lr;
 
-  private Set<Lobby> lobbies = new HashSet<>();
-
   private static final String ALPHANUMERIC_CHARS =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   private static final int ID_LENGTH = 6;
@@ -49,30 +47,17 @@ public class LobbyController {
   @GetMapping(path = "/create-lobby")
   public ModelAndView createLobby(@ModelAttribute Lobby lobby)
     throws IOException {
-    // System.out.println(lobby.getNumOfQuestions());
-    // System.out.println(lobby.getCategory());
-    // System.out.println(lobby.getDifficulty());
-    // String jsonRequest = apiCallService.fetchDataFromApi(
-    //   "https://opentdb.com/api.php?amount=10&category=18&difficulty=medium"
-    // );
-    // List<String> questions = lobbyService.parseJson(jsonRequest);
-    // for (String question : questions) {
-    //   System.out.println(question);
-    // }
-
     ModelAndView mav = new ModelAndView("host-lobby");
 
-    // if have time, do it with redis, get keys -> loop -> verifiy -> add keys
-    lobby.setLobbyId(generateUniqueId());
-    while (!lobbies.add(lobby)) {
-      lobby.setLobbyId(generateUniqueId());
+    String lobbyId = generateUniqueId();
+
+    while (lr.lobbyExists(lobbyId)) {
+      lobbyId = generateUniqueId();
     }
-    String lobbyId = lobby.getLobbyId();
-    lr.createLobby(lobbyId);
+
+    lobby.setLobbyId(lobbyId);
+    lr.createLobby(lobby);
     mav.addObject("lobbyId", lobbyId);
-    // lobby = new Lobby();
-    // mav.addObject("lobbies", lobbies);
-    // mav.setViewName("redirect:/lobby");
 
     return mav;
   }

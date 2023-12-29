@@ -85,14 +85,21 @@ function showTimer(message) {
 
 function questionTimer(message) {
   $("#questionTimer").html("Points: " + message);
+  if (message == 0) {
+
+    $("#result").show();
+    disableAnswers(true);
+  }
 }
 
 function showQuestion(question) {
+  $("#result").hide();
+  disableAnswers(false);
+  $('#result').removeClass('alert-success').removeClass('alert-danger').addClass('alert-warning');
+  $("#result").html("No answer");
   $("#gameQuestion").html(question.question);
   if (question.type == "multiple") {
     var questions = question.answers;
-    // questions.push(question.correct_answer);
-    // shuffleQuestions(questions);
 
     for (let i = 0; i < questions.length; i++) {
       $("#gameQuestion" + (i + 1)).html(questions[i]);
@@ -116,14 +123,17 @@ function shuffleQuestions(array) {
 }
 
 function handleAnswer(message) {
+  disableAnswers(true);
   var answer = $('#gameQuestion' + message).text();
   var question = $('#gameQuestion').text();
   var jsonRequest = JSON.stringify({ 'playerName': playerName, 'question': question, 'answer': answer, 'points': questionTime });
   sendDataToSpring(jsonRequest);
-  // stompClient.publish({
-  //   destination: "/app/checkAnswer/" + lobbyId,
-  //   body: JSON.stringify({ 'playerName': playerName, 'question': question, 'answer': answer })
-  // });
+}
+
+function disableAnswers(disabled) {
+  for (let i = 1; i <= 5; i++) {
+    $('#gameQuestion' + i).prop('disabled', disabled);
+  }
 }
 
 function sendDataToSpring(jsonRequest) {
@@ -134,12 +144,23 @@ function sendDataToSpring(jsonRequest) {
     data: jsonRequest,
     success: function (response) {
       console.log("Data sent successfully!");
-      console.log(response);
+      // console.log(response);
+      changeResult(response.message);
     },
     error: function (error) {
       console.error("Error sending data:", error);
     }
   });
+}
+
+function changeResult(message) {
+  if (message == "wrong") {
+    $('#result').removeClass('alert-success').removeClass('alert-warning').addClass('alert-danger');
+    $('#result').html("Wrong!");
+  } else if (message == "correct") {
+    $('#result').removeClass('alert-danger').removeClass('alert-warning').addClass('alert-success');
+    $('#result').html("Correct!");
+  }
 }
 
 // $(function () {

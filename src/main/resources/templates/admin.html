@@ -17,7 +17,7 @@
         <form method="GET" class="form-inline" th:object="${lobby}">
           <div class="mb-2">
             <lable for="questions" class="form-label">Number of questions</lable>
-            <input type="number" class="form-control" min="10" max="50" th:field="*{numOfQuestions}">
+            <input type="number" class="form-control" min="5" max="15" th:field="*{numOfQuestions}">
           </div>
           <div class="mb-2">
             <label for="category" class="form-label">Select a category</label>
@@ -31,21 +31,21 @@
             <label for="category" class="form-label">Select a category</label><br />
 
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" th:field="*{difficulty}" value="Easy" id="easy">
+              <input class="form-check-input" type="radio" th:field="*{difficulty}" value="easy" id="easy">
               <label class="form-check-label" for="easy">
                 Easy
               </label>
             </div>
 
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" th:field="*{difficulty}" value="Medium" id="medium">
+              <input class="form-check-input" type="radio" th:field="*{difficulty}" value="medium" id="medium">
               <label class="form-check-label" for="medium">
                 Medium
               </label>
             </div>
 
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" th:field="*{difficulty}" value="Hard" id="hard">
+              <input class="form-check-input" type="radio" th:field="*{difficulty}" value="hard" id="hard">
               <label class="form-check-label" for="hard">
                 Hard
               </label>

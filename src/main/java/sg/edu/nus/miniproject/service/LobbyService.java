@@ -51,10 +51,18 @@ public class LobbyService {
     return formattedQuestion.toString();
   }
 
-  public List<Question> getQuestions()
-    throws JsonMappingException, JsonProcessingException {
+  public List<Question> getQuestions(
+    int amount,
+    String category,
+    String difficulty
+  ) throws JsonMappingException, JsonProcessingException {
     String jsonRequest = apiCallService.fetchDataFromApi(
-      "https://opentdb.com/api.php?amount=5&category=18&difficulty=medium"
+      String.format(
+        "https://opentdb.com/api.php?amount=%d&category=%s&difficulty=%s",
+        amount,
+        category,
+        difficulty
+      )
     );
     QuestionResponse qr = objectMapper.readValue(
       jsonRequest,
@@ -71,7 +79,6 @@ public class LobbyService {
     String answer
   ) throws JsonMappingException, JsonProcessingException {
     boolean correct = false;
-    // System.out.printf("the answer from js: %s\n", answer);
 
     for (Question q : questions) {
       if (HtmlUtils.htmlUnescape(q.getQuestion()).equals(question)) {
