@@ -13,11 +13,6 @@ public class ApiCallService {
   }
 
   public String fetchDataFromApi(String url) {
-    return webClient
-      .get()
-      .uri(url)
-      .retrieve()
-      .bodyToMono(String.class)
-      .block(); // block() for simplicity; in a real application, consider using subscribeOn()
+    return webClient.get().uri(url).retrieve().bodyToMono(String.class).block();
   }
 }

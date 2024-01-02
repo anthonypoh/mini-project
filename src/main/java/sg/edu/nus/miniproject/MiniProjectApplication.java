@@ -1,8 +1,5 @@
 package sg.edu.nus.miniproject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
@@ -23,6 +20,6 @@ public class MiniProjectApplication implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-		System.out.println("Starting Mini Project");
+    System.out.println("Starting Mini Project");
   }
 }

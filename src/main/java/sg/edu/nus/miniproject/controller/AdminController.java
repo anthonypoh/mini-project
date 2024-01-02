@@ -13,8 +13,9 @@ public class AdminController {
   @GetMapping
   public String adminPage(Model m) {
     Lobby lobby = new Lobby();
-    lobby.setNumOfQuestions(10);
+    lobby.setNumOfQuestions(5);
     lobby.setDifficulty("easy");
+    lobby.setCategory("18");
     m.addAttribute("lobby", lobby);
     return "admin";
   }

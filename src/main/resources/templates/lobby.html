@@ -25,7 +25,7 @@
   </noscript>
 
   <div class="container p-lg-2">
-    <p id="wait">Please wait for the game to start.</p>
+    <p id="wait" class="mx-auto">Please wait for the game to start.</p>
 
     <div class="row gx-2 gy-2 mt-5" id="game" style="display:none">
       <div class="col-md-3">
@@ -33,6 +33,9 @@
       </div>
       <div class="col-md-9 mb-5">
         <h1 id="gameQuestion">question here</h1>
+      </div>
+      <div class="col-md-12 mb-5" id="gameAnswer" style="display:none">
+        <h1></h1>
       </div>
       <div class="col-md-6 text-center d-grid"><button class="btn btn-primary" onclick="handleAnswer('1')"
           id="gameQuestion1">question 1</button>
@@ -48,47 +51,6 @@
       </div>
       <div class="col-md-12 text-center alert alert-danger" id="result"></div>
     </div>
-    <!-- <div class="row" id="init">
-      <div class="col-md-6">
-        <h1>lobby id: <span th:text="${lobbyId}"></span></h1>
-      </div>
-      <div class="col-md-6">
-        <h1>Game starts in: <span id="timer"></span></h1>
-      </div> -->
-    <!-- <div class="col-md-6"> -->
-    <!-- <form class="form-inline"> -->
-    <!-- <div class="form-group">
-          <label for="connect">WebSocket connection:</label>
-          <button id="connect" class="btn btn-default" type="submit">Connect</button>
-          <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
-          </button>
-        </div> -->
-    <!-- </form> -->
-    <!-- </div> -->
-    <!-- <div class="col-md-6">
-        <form class="form-inline">
-        <div class="form-group">
-          <label for="name">What is your name?</label>
-          <input type="text" id="name" class="form-control" placeholder="Your name here...">
-        </div>
-        <button id="send" class="btn btn-primary" type="submit">Send</button>
-        </form>
-      </div> -->
-    <!-- </div> -->
-
-    <!-- <div class="row">
-      <div class="col-md-12">
-        <table id="conversation" class="table table-striped">
-          <thead>
-            <tr>
-              <th>Players</th>
-            </tr>
-          </thead>
-          <tbody id="greetings">
-          </tbody>
-        </table>
-      </div>
-    </div> -->
   </div>
 </body>
 

@@ -12,32 +12,25 @@
 <body>
   <div id="main-content" class="container p-lg-2">
     <div class="row">
-      <!-- <div class="col-md-6">
-        <form method="GET" class="form-inline">
-          <div class="mb-2">
-            <label for="name" class="form-label">Create a Lobby</label>
-            <input type="text" id="name" name="name" class="form-control" placeholder="Your name here...">
+      <div class="col-md-6 mx-auto">
+        <div class="card">
+          <div class="card-body">
+            <form method="GET" class="form-inline">
+              <div class="mb-2">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Your name here..." required>
+              </div>
+              <div class="mb-2">
+                <label for="lobbyId" class="form-label">Lobby Id</label>
+                <input type="text" id="lobbyId" name="lobbyId" class="form-control" placeholder="Lobby Id..." required>
+              </div>
+              <div class="d-grid">
+                <button id="create" class="btn btn-primary" type="submit" formaction="/lobby">Join</button>
+              </div>
+            </form>
+            <div class="alert alert-danger" th:if="${added}">Somebody already took this name.</div>
           </div>
-          <div class="d-grid">
-            <button id="create" class="btn btn-primary" type="submit" formaction="/lobby/create-lobby">Create</button>
-          </div>
-        </form>
-      </div> -->
-      <div class="col-md-6">
-        <form method="GET" class="form-inline">
-          <div class="mb-2">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" id="name" name="name" class="form-control" placeholder="Your name here...">
-          </div>
-          <div class="mb-2">
-            <label for="lobbyId" class="form-label">Lobby Id</label>
-            <input type="text" id="lobbyId" name="lobbyId" class="form-control" placeholder="Lobby Id...">
-          </div>
-          <div class="d-grid">
-            <button id="create" class="btn btn-primary" type="submit" formaction="/lobby">Join</button>
-          </div>
-        </form>
-        <div class="alert alert-danger" th:if="${added}">Somebody already took this name.</div>
+        </div>
       </div>
     </div>
   </div>

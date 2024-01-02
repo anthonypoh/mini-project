@@ -1,11 +1,13 @@
+// const stompClient = new StompJs.Client({
+//   brokerURL: 'ws://localhost:8080/mini-project-websocket'
+// });
 const stompClient = new StompJs.Client({
-  brokerURL: 'ws://localhost:8080/gs-guide-websocket'
+  brokerURL: 'wss://zesty-cars-production.up.railway.app/mini-project-websocket'
 });
 
 console.log("Lobby ID: " + lobbyId);
 
 stompClient.onConnect = (frame) => {
-  // setConnected(true);
   console.log('Connected: ' + frame);
 
   stompClient.subscribe('/topic/' + lobbyId, (json) => {
@@ -18,6 +20,10 @@ stompClient.onConnect = (frame) => {
         break;
       case "gameEnd":
         if (JSON.parse(json.body).content == 1) {
+          stompClient.publish({
+            destination: "/topic/game/" + lobbyId,
+            body: JSON.stringify({ 'cmd': "gameEnd" })
+          });
           console.log("Game ended!")
         } else {
           console.log("something went wrong.");
@@ -100,13 +106,15 @@ function questionTimer(message) {
 }
 
 function leaderboard(message) {
+  $("#gameAnswer").show();
   $("#leaderboard").show();
   var playersListElement = document.getElementById('players-list');
 
-  message.forEach(function(player) {
-      var listItem = document.createElement('li');
-      listItem.textContent = player.name + ': ' + player.score;
-      playersListElement.appendChild(listItem);
+  message.forEach(function (player) {
+    var listItem = document.createElement('li');
+    listItem.className = 'list-group-item';
+    listItem.textContent = player.name + ': ' + player.score;
+    playersListElement.appendChild(listItem);
   })
 }
 
@@ -117,10 +125,13 @@ function leaderboardTimer(message) {
 }
 
 function showQuestion(question) {
+  $("#gameAnswer").hide();
   $("#players-list").empty();
   $("#leaderboard").hide();
   $("#questionsDiv").show();
   $("#gameQuestion").html(question.question);
+  $("#gameAnswer h1").html("Correct Answer: " + question.correct_answer);
+
   if (question.type == "multiple") {
     var questions = question.answers;
 
@@ -137,6 +148,4 @@ function showQuestion(question) {
     $("#gameQuestion4").hide();
   }
 }
-
-
 connect();

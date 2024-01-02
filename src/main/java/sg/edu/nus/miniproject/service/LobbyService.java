@@ -3,21 +3,27 @@ package sg.edu.nus.miniproject.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 import sg.edu.nus.miniproject.model.Question;
 import sg.edu.nus.miniproject.model.QuestionResponse;
-import sg.edu.nus.miniproject.repo.LobbyRepo;
 
 @Service
 public class LobbyService {
 
   @Autowired
   private ApiCallService apiCallService;
+
+  private int initCountdownValue = 10;
+  private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
   ObjectMapper objectMapper = new ObjectMapper();
 
@@ -90,5 +96,27 @@ public class LobbyService {
     }
 
     return correct;
+  }
+
+  @PostConstruct
+  public void startCountdown() {
+    executorService.scheduleAtFixedRate(
+      this::updateCountdown,
+      0,
+      1,
+      TimeUnit.SECONDS
+    );
+  }
+
+  public int getinitCountdownValue() {
+    return initCountdownValue;
+  }
+
+  private void updateCountdown() {
+    if (initCountdownValue > 0) {
+      initCountdownValue--;
+    } else {
+      executorService.shutdown();
+    }
   }
 }

@@ -2,12 +2,12 @@ package sg.edu.nus.miniproject.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.HashSet;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,9 +45,17 @@ public class LobbyController {
   }
 
   @GetMapping(path = "/create-lobby")
-  public ModelAndView createLobby(@ModelAttribute Lobby lobby)
-    throws IOException {
+  public ModelAndView createLobby(
+    @Valid @ModelAttribute Lobby lobby,
+    BindingResult result
+  ) throws IOException {
     ModelAndView mav = new ModelAndView("host-lobby");
+
+    // Form Validation
+    if (result.hasErrors()) {
+      mav.setViewName("admin");
+      return mav;
+    }
 
     String lobbyId = generateUniqueId();
 

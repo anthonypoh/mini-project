@@ -1,8 +1,5 @@
 package sg.edu.nus.miniproject.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Collections;
@@ -17,12 +14,8 @@ import org.springframework.web.util.HtmlUtils;
 import sg.edu.nus.miniproject.model.Message;
 import sg.edu.nus.miniproject.model.Player;
 import sg.edu.nus.miniproject.model.Question;
-import sg.edu.nus.miniproject.model.QuestionResponse;
 import sg.edu.nus.miniproject.repo.LobbyRepo;
-import sg.edu.nus.miniproject.service.ApiCallService;
-import sg.edu.nus.miniproject.service.LobbyService;
 import sg.edu.nus.miniproject.service.MessageService;
-import sg.edu.nus.miniproject.websocket.WebSocketConfig;
 
 @Controller
 public class MessageController {
@@ -38,7 +31,6 @@ public class MessageController {
   @MessageMapping("/hello/{lobbyId}")
   @SendTo("/topic/{lobbyId}")
   public Message greeting(Player message) throws Exception {
-    // Thread.sleep(1000); // simulated delay
     return new Message(
       "greeting",
       "Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!"
@@ -49,10 +41,7 @@ public class MessageController {
   @SendTo("/topic/host/{lobbyId}")
   public Message initGame(@DestinationVariable String lobbyId, String json)
     throws InterruptedException, IOException {
-    // ObjectMapper objectMapper = new ObjectMapper();
-    // JsonNode jsonNode = objectMapper.readTree(json);
-    // String lobbyId = jsonNode.get("lobbyId").asText();
-    for (int i = 10; i >= 0; i--) {
+    for (int i = 30; i >= 0; i--) {
       broadcastInitTime(i, lobbyId);
       Thread.sleep(1000);
     }
@@ -69,7 +58,7 @@ public class MessageController {
       question.combineAndShuffleAnswers();
       String questionString = objectMapper.writeValueAsString(question);
       broadcastQuestion(questionString, lobbyId);
-      for (int i = 30; i >= 0; i--) {
+      for (int i = 100; i >= 0; i--) {
         broadcastQuestionTime(i, lobbyId);
         Thread.sleep(100);
       }
@@ -83,7 +72,7 @@ public class MessageController {
       String jsonPlayers = objectMapper.writeValueAsString(players);
       broadcastLeaderboard(lobbyId, jsonPlayers);
 
-      for (int i = 3; i > 0; i--) {
+      for (int i = 5; i > 0; i--) {
         broadcastLeaderboardTime(i, lobbyId);
         Thread.sleep(1000);
       }
@@ -91,18 +80,6 @@ public class MessageController {
 
     return new Message("gameEnd", "1");
   }
-
-  // @MessageMapping("/checkAnswer/{lobbyId}")
-  // @SendTo("/topic/game/{lobbyId}")
-  // public Message checkAnswer(@DestinationVariable String lobbyId, String json)
-  //   throws JsonMappingException, JsonProcessingException {
-  //   JsonNode jsonNode = objectMapper.readTree(json);
-  //   String playerName = jsonNode.get("playerName").asText();
-  //   String question = jsonNode.get("question").asText();
-  //   String answer = jsonNode.get("answer").asText();
-
-  //   return new Message("answer", "{\"playerName\": \"abc\"}");
-  // }
 
   private void broadcastInitTime(int i, String lobbyId) {
     messageService.sendMessageToClient(

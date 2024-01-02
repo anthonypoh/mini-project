@@ -1,11 +1,19 @@
 package sg.edu.nus.miniproject.model;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import java.util.Objects;
 
 public class Lobby {
 
   private String lobbyId;
+
+  @Min(5)
+  @Max(20)
   private Integer numOfQuestions;
+
   private String category;
   private String difficulty;
 

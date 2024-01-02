@@ -1,5 +1,8 @@
+// const stompClient = new StompJs.Client({
+//   brokerURL: 'ws://localhost:8080/mini-project-websocket'
+// });
 const stompClient = new StompJs.Client({
-  brokerURL: 'ws://localhost:8080/gs-guide-websocket'
+  brokerURL: 'wss://zesty-cars-production.up.railway.app/mini-project-websocket'
 });
 
 console.log("Lobby ID: " + lobbyId);
@@ -7,11 +10,7 @@ console.log("Name: " + playerName);
 let questionTime = 0;
 
 stompClient.onConnect = (frame) => {
-  setConnected(true);
   console.log('Connected: ' + frame);
-  stompClient.subscribe('/topic/' + lobbyId, (json) => {
-    showGreeting(JSON.parse(json.body).content);
-  });
   stompClient.subscribe('/topic/game/' + lobbyId, (json) => {
     switch (JSON.parse(json.body).cmd) {
       case "questionTime":
@@ -24,6 +23,12 @@ stompClient.onConnect = (frame) => {
         break;
       case "question":
         showQuestion(JSON.parse(json.body));
+        break;
+      case "gameEnd":
+        console.log("game ended")
+        $(document).ready(function () {
+          window.location.href = '/';
+        });
         break;
       default:
         console.log("error occured");
@@ -42,25 +47,12 @@ stompClient.onStompError = (frame) => {
   console.error('Additional details: ' + frame.body);
 };
 
-function setConnected(connected) {
-  $("#connect").prop("disabled", connected);
-  $("#disconnect").prop("disabled", !connected);
-  if (connected) {
-    $("#conversation").show();
-  }
-  else {
-    $("#conversation").hide();
-  }
-  $("#greetings").html("");
-}
-
 function connect() {
   stompClient.activate();
 }
 
 function disconnect() {
   stompClient.deactivate();
-  setConnected(false);
   console.log("Disconnected");
 }
 
@@ -86,18 +78,21 @@ function showTimer(message) {
 function questionTimer(message) {
   $("#questionTimer").html("Points: " + message);
   if (message == 0) {
-
+    $("#gameAnswer").show();
     $("#result").show();
     disableAnswers(true);
   }
 }
 
 function showQuestion(question) {
+  $("#gameAnswer").hide();
   $("#result").hide();
   disableAnswers(false);
   $('#result').removeClass('alert-success').removeClass('alert-danger').addClass('alert-warning');
   $("#result").html("No answer");
+
   $("#gameQuestion").html(question.question);
+  $("#gameAnswer h1").html("Correct Answer: " + question.correct_answer);
   if (question.type == "multiple") {
     var questions = question.answers;
 
@@ -127,7 +122,7 @@ function handleAnswer(message) {
   var answer = $('#gameQuestion' + message).text();
   var question = $('#gameQuestion').text();
   var jsonRequest = JSON.stringify({ 'playerName': playerName, 'question': question, 'answer': answer, 'points': questionTime });
-  sendDataToSpring(jsonRequest);
+  sendDataToSpring("/api/check/" + lobbyId, jsonRequest);
 }
 
 function disableAnswers(disabled) {
@@ -136,10 +131,10 @@ function disableAnswers(disabled) {
   }
 }
 
-function sendDataToSpring(jsonRequest) {
+function sendDataToSpring(url, jsonRequest) {
   $.ajax({
     type: "POST",
-    url: "/api/check/" + lobbyId,
+    url: url,
     contentType: "application/json",
     data: jsonRequest,
     success: function (response) {
@@ -162,12 +157,5 @@ function changeResult(message) {
     $('#result').html("Correct!");
   }
 }
-
-// $(function () {
-//     $("form").on('submit', (e) => e.preventDefault());
-//     $("#connect").click(() => connect());
-//     $("#disconnect").click(() => disconnect());
-//     $("#send").click(() => sendName());
-// });
 
 connect();

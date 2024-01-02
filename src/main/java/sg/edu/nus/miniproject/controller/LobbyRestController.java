@@ -39,7 +39,6 @@ public class LobbyRestController {
     @PathVariable("lobbyId") String lobbyId,
     @RequestBody String jsonRequest
   ) throws JsonMappingException, JsonProcessingException {
-
     JsonNode jsonNode = objectMapper.readTree(jsonRequest);
     String playerName = jsonNode.get("playerName").asText();
     String question = jsonNode.get("question").asText();
@@ -55,7 +54,6 @@ public class LobbyRestController {
       message = "{\"message\": \"correct\"}";
     }
 
-    // update redis
     return new ResponseEntity<>(message, HttpStatus.OK);
   }
 }
